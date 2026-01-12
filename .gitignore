@@ -17,8 +17,6 @@ out-tsc/
 .env
 .env.local
 .env.production
-src/environments/environment.ts
-src/environments/environment.prod.ts
 
 # IDE files
 .vscode/
