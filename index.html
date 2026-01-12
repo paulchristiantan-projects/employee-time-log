@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Time Log</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Registration Form -->
+        <div id="registration-form" class="form-container">
+            <h2>Employee Registration</h2>
+            <form id="register-form">
+                <input type="text" id="reg-name" placeholder="Full Name" required>
+                <input type="text" id="reg-position" placeholder="Position" required>
+                <input type="text" id="reg-employee-number" placeholder="Employee Number" required>
+                <input type="password" id="reg-password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="form-container hidden">
+            <h2>Employee Login</h2>
+            <form id="login-form-element">
+                <input type="text" id="login-employee-number" placeholder="Employee Number" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" onclick="showRegistration()">Register here</a></p>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard-container hidden">
+            <div class="header">
+                <h2>Employee Dashboard</h2>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
+            
+            <div class="employee-info">
+                <p><strong>Name:</strong> <span id="employee-name"></span></p>
+                <p><strong>Position:</strong> <span id="employee-position"></span></p>
+                <p><strong>Employee #:</strong> <span id="employee-number"></span></p>
+            </div>
+
+            <div class="time-tracking">
+                <div class="current-time">
+                    <h3>Current Time: <span id="current-time"></span></h3>
+                </div>
+                
+                <div class="time-buttons">
+                    <button id="time-in-btn" class="time-btn">Time In</button>
+                    <button id="time-out-btn" class="time-btn" disabled>Time Out</button>
+                </div>
+
+                <div class="time-status">
+                    <p><strong>Status:</strong> <span id="work-status">Not Clocked In</span></p>
+                    <p><strong>Time In:</strong> <span id="time-in-display">--</span></p>
+                    <p><strong>Time Out:</strong> <span id="time-out-display">--</span></p>
+                </div>
+
+                <div class="accumulated-hours">
+                    <h3>Accumulated Hours</h3>
+                    <p><strong>Today:</strong> <span id="today-hours">0.00</span> hours</p>
+                    <p><strong>This Week:</strong> <span id="week-hours">0.00</span> hours</p>
+                    <p><strong>This Month:</strong> <span id="month-hours">0.00</span> hours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
