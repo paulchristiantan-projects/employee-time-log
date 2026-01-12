@@ -5,58 +5,94 @@ import { Observable, interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
+  styleUrls: ['./dashboard.component.css'],
   template: `
     <div class="dashboard" *ngIf="employee">
-      <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #fff; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
-        <div class="header-left" style="display: flex; align-items: center; gap: 15px; min-width: 0; flex: 1;">
-          <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
-            <div class="user-avatar" style="width: 48px; height: 48px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; flex-shrink: 0;">{{ employee.name.charAt(0).toUpperCase() }}</div>
-            <div class="user-info" style="min-width: 0;">
-              <h1 style="margin: 0; font-size: clamp(16px, 4vw, 20px); font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ employee.name }}</h1>
-              <p style="margin: 0; font-size: clamp(12px, 3vw, 14px); color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ employee.position }} • {{ employee.employeeNumber }}</p>
+      <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; padding: clamp(12px, 3vw, 20px); background: #fff; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px; flex-wrap: wrap; gap: clamp(8px, 2vw, 16px);">
+        <!-- Mobile Layout -->
+        <div class="mobile-header" style="width: 100%; flex-direction: column; gap: 16px;">
+          <!-- User info + Logout -->
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="user-profile" style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+              <div class="user-avatar" style="width: 44px; height: 44px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px; flex-shrink: 0;">{{ employee.name.charAt(0).toUpperCase() }}</div>
+              <div class="user-info" style="min-width: 0; flex: 1;">
+                <h1 style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ employee.name }}</h1>
+                <p style="margin: 0; font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ employee.position }} • {{ employee.employeeNumber }}</p>
+              </div>
+            </div>
+            <button class="logout-btn" (click)="logout()" style="padding: 8px 12px; border: 1px solid #d1d5db; background: white; border-radius: 6px; color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 12px; flex-shrink: 0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" x2="9" y1="12" y2="12"/>
+              </svg>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Desktop Layout -->
+        <div class="desktop-header" style="justify-content: space-between; align-items: center; width: 100%; gap: 16px;">
+          <div class="header-left" style="display: flex; align-items: center; gap: 15px; min-width: 0; flex: 1;">
+            <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
+              <div class="user-avatar" style="width: 48px; height: 48px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px; flex-shrink: 0;">{{ employee.name.charAt(0).toUpperCase() }}</div>
+              <div class="user-info" style="min-width: 0;">
+                <h1 style="margin: 0; font-size: 20px; font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ employee.name }}</h1>
+                <p style="margin: 0; font-size: 14px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ employee.position }} • {{ employee.employeeNumber }}</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="header-center" style="order: 3; width: 100%; text-align: center;" 
-             [style.order]="'window.innerWidth > 768 ? 0 : 3'"
-             [style.width]="'window.innerWidth > 768 ? auto : 100%'">
-          <div class="datetime-widget" style="text-align: center;">
-            <div class="time-display" style="font-size: clamp(20px, 5vw, 24px); font-weight: 600; color: #1f2937;">{{ currentTime | date:'h:mm:ss a' }}</div>
-            <div class="date-display" style="font-size: clamp(12px, 3vw, 14px); color: #6b7280;">{{ currentTime | date:'EEEE, MMM d' }}</div>
+          
+          <div class="header-center" style="flex: 0 0 auto;">
+            <div class="datetime-widget" style="text-align: center;">
+              <div class="time-display" style="font-size: 24px; font-weight: 600; color: #1f2937;">{{ currentTime | date:'h:mm:ss a' }}</div>
+              <div class="date-display" style="font-size: 14px; color: #6b7280;">{{ currentTime | date:'EEEE, MMM d' }}</div>
+            </div>
           </div>
-        </div>
-        
-        <div class="header-right" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-          <div class="time-tracker">
+          
+          <div class="header-right" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
             <button 
               class="track-btn"
               [class.tracking]="isWorking"
               (click)="toggleTimeTracking()"
-              style="padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px); border: none; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: clamp(12px, 3vw, 14px); white-space: nowrap;"
+              style="padding: 12px 24px; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px; white-space: nowrap;"
               [style.background]="isWorking ? '#ef4444' : '#10b981'"
               [style.color]="'white'">
               <span class="track-indicator" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;"
                 [style.background]="isWorking ? '#fca5a5' : '#86efac'"></span>
               <span class="track-label">{{ isWorking ? 'Clock Out' : 'Clock In' }}</span>
             </button>
+            <button class="logout-btn" (click)="logout()" style="padding: 8px 16px; border: 1px solid #d1d5db; background: white; border-radius: 6px; color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; white-space: nowrap;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" x2="9" y1="12" y2="12"/>
+              </svg>
+              <span>Logout</span>
+            </button>
           </div>
-          <button class="logout-btn" (click)="logout()" style="padding: clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px); border: 1px solid #d1d5db; background: white; border-radius: 6px; color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: clamp(12px, 3vw, 14px); white-space: nowrap;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16,17 21,12 16,7"/>
-              <line x1="21" x2="9" y1="12" y2="12"/>
-            </svg>
-            <span style="display: none;" [style.display]="'window.innerWidth > 480 ? inline : none'">Logout</span>
-          </button>
         </div>
       </div>
       
-      <!-- Mobile-specific time display -->
-      <div style="display: none; padding: 16px; background: #f9fafb; border-radius: 8px; margin-bottom: 20px; text-align: center;" 
+      <!-- Mobile time display -->
+      <div class="mobile-time" style="display: block; padding: clamp(12px, 3vw, 16px); background: #f9fafb; border-radius: clamp(6px, 1.5vw, 8px); margin-bottom: 20px; text-align: center;" 
            [style.display]="'window.innerWidth <= 768 ? block : none'">
-        <div style="font-size: 28px; font-weight: 600; color: #1f2937; margin-bottom: 4px;">{{ currentTime | date:'h:mm:ss a' }}</div>
-        <div style="font-size: 14px; color: #6b7280;">{{ currentTime | date:'EEEE, MMMM d, y' }}</div>
+        <div style="font-size: clamp(24px, 6vw, 32px); font-weight: 600; color: #1f2937; margin-bottom: 4px;">{{ currentTime | date:'h:mm:ss a' }}</div>
+        <div style="font-size: clamp(12px, 3vw, 14px); color: #6b7280; margin-bottom: 16px;">{{ currentTime | date:'EEEE, MMMM d, y' }}</div>
+        <!-- Clock In/Out button below clock -->
+        <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+          <button 
+            class="track-btn"
+            [class.tracking]="isWorking"
+            (click)="toggleTimeTracking()"
+            style="padding: 14px 32px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 16px; min-width: 160px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block;"
+            [style.background]="isWorking ? '#ef4444' : '#10b981'"
+            [style.color]="'white'">
+            <span class="track-indicator" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px;"
+              [style.background]="isWorking ? '#fca5a5' : '#86efac'"></span>
+            <span class="track-label">{{ isWorking ? 'Clock Out' : 'Clock In' }}</span>
+          </button>
+        </div>
       </div>
 
       <div class="content-grid" style="padding: 20px;">

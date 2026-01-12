@@ -1,0 +1,27 @@
+/* Mobile-first responsive styles */
+.mobile-header {
+  display: flex !important;
+}
+
+.desktop-header {
+  display: none !important;
+}
+
+.mobile-time {
+  display: block !important;
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  .mobile-header {
+    display: none !important;
+  }
+  
+  .desktop-header {
+    display: flex !important;
+  }
+  
+  .mobile-time {
+    display: none !important;
+  }
+}
