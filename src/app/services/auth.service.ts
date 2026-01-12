@@ -3,7 +3,6 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 export interface Employee {
   uid: string;
@@ -12,6 +11,11 @@ export interface Employee {
   employeeNumber: string;
   role?: 'employee' | 'admin';
 }
+
+const ADMIN_CONFIG = {
+  employeeNumber: 'ADMIN001',
+  password: 'Infor123!'
+};
 
 @Injectable()
 export class AuthService {
@@ -57,12 +61,12 @@ export class AuthService {
         const employee = userData?.data() as Employee;
         
         // If no employee data found and this is admin credentials, create admin document
-        if (!employee && employeeNumber === environment.admin.employeeNumber) {
+        if (!employee && employeeNumber === ADMIN_CONFIG.employeeNumber) {
           await this.firestore.collection('employees').doc(result.user.uid).set({
             uid: result.user.uid,
             name: 'System Administrator',
             position: 'Administrator',
-            employeeNumber: environment.admin.employeeNumber,
+            employeeNumber: ADMIN_CONFIG.employeeNumber,
             role: 'admin'
           });
           window.location.href = '/admin';
@@ -78,8 +82,8 @@ export class AuthService {
     } catch (error: any) {
       // If admin credentials and account doesn't exist, create it
       if (error.code === 'auth/user-not-found' && 
-          employeeNumber === environment.admin.employeeNumber && 
-          password === environment.admin.password) {
+          employeeNumber === ADMIN_CONFIG.employeeNumber && 
+          password === ADMIN_CONFIG.password) {
         await this.ensureAdminExists();
         // Try login again
         const email = `${employeeNumber}@company.com`;
@@ -108,8 +112,8 @@ export class AuthService {
 
   private async ensureAdminExists() {
     try {
-      const adminEmail = `${environment.admin.employeeNumber}@company.com`;
-      const adminPassword = environment.admin.password;
+      const adminEmail = `${ADMIN_CONFIG.employeeNumber}@company.com`;
+      const adminPassword = ADMIN_CONFIG.password;
       
       // Try to create admin account
       const credential = await this.afAuth.createUserWithEmailAndPassword(adminEmail, adminPassword);
@@ -120,7 +124,7 @@ export class AuthService {
           uid: credential.user.uid,
           name: 'System Administrator',
           position: 'Administrator',
-          employeeNumber: environment.admin.employeeNumber,
+          employeeNumber: ADMIN_CONFIG.employeeNumber,
           role: 'admin'
         });
       }
